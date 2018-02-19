@@ -1,0 +1,205 @@
+<?php
+/**
+ * Cybage Multifilter Layered Navigation Plugin
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * It is available on the World Wide Web at:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you are unable to access it on the World Wide Web, please send an email
+ * To: Support_ecom@cybage.com.  We will send you a copy of the source file.
+ *
+ * @category   Multifilter Layered Navigation Plugin
+ * @package    Cybage_Multifilter
+ * @copyright  Copyright (c) 2015 Cybage Software Pvt. Ltd., India
+ *             http://www.cybage.com/pages/centers-of-excellence/ecommerce/ecommerce.aspx
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author     Cybage Software Pvt. Ltd. <Support_ecom@cybage.com>
+ */
+?>
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$productColl = ($objectManager->get('\Magento\Framework\Session\SessionManager')->gettotalCount() > 0) ? $objectManager->get('\Magento\Framework\Session\SessionManager')->gettotalCount():$block->getCollection()->getSize();
+$activeLimit = $this->multifilterSession->getActiveLimit();
+$activeSort = $this->multifilterSession->getActiveSort();
+$currentSwitcher = $this->multifilterSession->getViewMode();
+$currentCatId = $block->getCurrentCat();
+if(empty($currentSwitcher)){
+    $currentSwitcher = 'grid';
+}
+if ($block->getCollection()->getSize()):
+    ?>
+    <div class="toolbar toolbar-products" data-mage-init='<?php /* @escapeNotVerified */ echo $block->getWidgetOptionsJson(); ?>'>
+        <?php if ($block->isExpanded()): ?>
+            <div class="modes">
+                <?php $_modes = $block->getModes(); ?>
+                <?php if ($_modes && count($_modes) > 1): ?>
+                    <strong class="modes-label" id="modes-label"><?php /* @escapeNotVerified */ echo __('View as') ?></strong>
+                    <?php foreach ($block->getModes() as $_code => $_label): ?>
+                        <?php if ($_code == $currentSwitcher): ?>
+                            <strong title="<?php /* @escapeNotVerified */ echo $_label ?>"
+                                    class="modes-mode active mode-<?php /* @escapeNotVerified */ echo strtolower($_code); ?>"
+                                    data-value="<?php /* @escapeNotVerified */ echo strtolower($_code); ?>">
+                                <span><?php /* @escapeNotVerified */ echo $_label ?></span>
+                            </strong>
+                        <?php else: ?>
+                            <a class="modes-mode mode-<?php /* @escapeNotVerified */ echo strtolower($_code); ?>"
+                               title="<?php /* @escapeNotVerified */ echo $_label ?>"
+                               href="javascript:void(0)"
+                               onclick="selectswitcher('<?php echo $_code;?>')"
+                               data-role="mode-switcher"
+                               data-value="<?php /* @escapeNotVerified */ echo strtolower($_code); ?>"
+                               id="mode-<?php /* @escapeNotVerified */ echo strtolower($_code); ?>"
+                               aria-labelledby="modes-label mode-<?php /* @escapeNotVerified */ echo strtolower($_code); ?>">
+                                <span><?php /* @escapeNotVerified */ echo $_label ?></span>
+                            </a>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+			
+        <?php endif; ?>
+        <p class="toolbar-amount" id="toolbar-amount">
+            <?php if ($productColl == 1): ?>
+                <?php /* @escapeNotVerified */ echo __('%1 Item', '<span class="toolbar-number">' . $productColl . '</span>')
+                ?>
+            <?php else: ?>
+                <?php /* @escapeNotVerified */ echo __('%1 Items', '<span class="toolbar-number">' . $productColl . '</span>')
+                ?>
+            <?php endif; ?>
+        </p>
+
+        <?php echo $block->getPagerHtml() ?>
+        <div class="field limiter">
+            <label class="label" for="limiter">
+                <span><?php /* @escapeNotVerified */ echo __('Show') ?></span>
+            </label>
+            <div class="control">
+                <select id="limiter" data-role="limiter" class="limiter-options" onchange="selectlimit(this)">
+                    <?php foreach ($block->getAvailableLimit() as $_key => $_limit): ?>
+                        <option value="<?php /* @escapeNotVerified */ echo $_key ?>"<?php if ($_key == $activeLimit): ?>
+                                    selected="selected"<?php endif ?>>
+                                    <?php /* @escapeNotVerified */ echo $_limit ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <span class="limiter-text"><?php /* @escapeNotVerified */ echo __('per page') ?></span>
+        </div>
+
+        <?php if ($block->isExpanded()): ?>
+            <div class="toolbar-sorter sorter">
+                <label class="sorter-label" for="sorter"><?php /* @escapeNotVerified */ echo __('Sort By') ?></label>
+                <select id="sorter" class="sorter-options" onchange="selectsort(this)">
+                    <?php foreach ($block->getAvailableOrders() as $_key => $_order): ?>
+                        <option value="<?php /* @escapeNotVerified */ echo $_key; ?>"
+                        <?php if ($activeSort == $_key): ?>
+                                    selected="selected"
+                                <?php endif; ?>
+                                >
+                                    <?php echo $block->escapeHtml(__($_order)) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        <?php endif; ?>
+    </div>
+<?php endif ?>
+
+<script>
+    function selectlimit(value){
+        var selectedFilter = [];
+        jQuery(value.value).attr('selected','selected');
+        jQuery('.multifilter').each(function(index,element){
+            if(jQuery(this).is(':checked')){
+                selectedFilter.push(jQuery(this).val());
+            }
+        });
+        var categoryFilter;
+        if (jQuery('#filterlist .multifilter.category').is(':checked')) {
+        } else {
+            <?php if($currentCatId){ ?>
+            categoryFilter = <?php echo $currentCatId ?>;
+             <?php } ?>
+        }
+        jQuery('#ajaxloader').show();
+        jQuery('#overlaydiv').show();
+        jQuery.ajax({
+            url: '<?php echo $block->getUrl("multifilter/category/ajax");?>',
+            type: "POST",
+            data: {"currentLimit":value.value,"checkedFilter":selectedFilter,"categoryFilter":categoryFilter},
+            dataType: "json",
+            success: function(data) {
+                jQuery('#ajaxloader').hide();
+                jQuery('#overlaydiv').hide();
+                jQuery('#result_data').html(data.list);
+                jQuery('#ajaxcollection').show();
+                jQuery('#corecollection').hide();
+            }
+        });
+    }
+        
+    function selectsort(value){
+        var selectedFilter = [];
+        jQuery('.multifilter').each(function(index,element){
+            if(jQuery(this).is(':checked')){
+                selectedFilter.push(jQuery(this).val());
+            }
+        });
+        var categoryFilter;
+        if (jQuery('#filterlist .multifilter.category').is(':checked')) {
+        } else {
+            <?php if($currentCatId){ ?>
+				categoryFilter = <?php echo $currentCatId ?>;
+             <?php } ?>
+        }
+        jQuery('#ajaxloader').show();
+        jQuery('#overlaydiv').show();
+        jQuery.ajax({
+            url: '<?php echo $block->getUrl("multifilter/category/ajax");?>',
+            type: "POST",
+            data: {"currentLimit":jQuery('#limiter').val(),"currentSortOpt":value.value,"checkedFilter":selectedFilter,"categoryFilter":categoryFilter},
+            dataType: "json",
+            success: function(data) {
+                jQuery('#ajaxloader').hide();
+                jQuery('#overlaydiv').hide();
+                jQuery('#result_data').html(data.list);
+                jQuery('#ajaxcollection').show();
+                jQuery('#corecollection').hide();
+            }
+        });
+        
+    }
+    
+    function selectswitcher(value)
+	{
+        var selectedFilter = [];
+        jQuery('.multifilter').each(function(index,element){
+            if(jQuery(this).is(':checked')){
+                selectedFilter.push(jQuery(this).val());
+            }
+        });        
+        if (jQuery('#filterlist .multifilter.category').is(':checked')) {
+        } else {
+            <?php if($currentCatId){ ?>
+            categoryFilter = <?php echo $currentCatId ?>;
+             <?php } ?>
+        }
+        jQuery('#ajaxloader').show();
+        jQuery('#overlaydiv').show();
+        jQuery.ajax({
+            url: '<?php echo $block->getUrl("multifilter/category/ajax");?>',
+            type: "POST",
+            data: {"currentLimit":jQuery('#limiter').val(),"currentSortOpt":jQuery('#sorter').val(),"checkedFilter":selectedFilter,"viewmode":value,"categoryFilter":categoryFilter},
+            dataType: "json",
+            success: function(data) {
+                jQuery('#ajaxloader').hide();
+                jQuery('#overlaydiv').hide();
+                jQuery('#result_data').html(data.list);
+                jQuery('#ajaxcollection').show();
+                jQuery('#corecollection').hide();
+            }
+        });        
+    }
+</script> 

@@ -1,0 +1,188 @@
+<?php
+/**
+ * Cybage Layermultifilter Layered Navigation Plugin
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * It is available on the World Wide Web at:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you are unable to access it on the World Wide Web, please send an email
+ * To: Support_ecom@cybage.com.  We will send you a copy of the source file.
+ *
+ * @category   Layermultifilter Layered Navigation Plugin
+ * @package    Cybage_Layermultifilter
+ * @copyright  Copyright (c) 2014 Cybage Software Pvt. Ltd., India
+ *             http://www.cybage.com/pages/centers-of-excellence/ecommerce/ecommerce.aspx
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author     Cybage Software Pvt. Ltd. <Support_ecom@cybage.com>
+ */
+?>
+<?php 
+$expandFilters = $this->helper('Cybage\Layermultifilter\Helper\Data')->getConfig('multifilter/general/expand_filters');
+$blocks = '[0,1,2,3,4,5,6,7]';
+$activeBlocks = $expandFilters == '1'?$blocks:'false';
+$currentCatId = $block->getCurrentCat();
+
+if ($block->canShowBlock()): ?>
+    <div class="block filter" id="layered-filter-block" data-mage-init='{"collapsible":{"openedState": "active", "collapsible": true, "active": false, "collateral": { "openedState": "filter-active", "element": "body" } }}'>
+        <?php $filtered = count($block->getLayer()->getState()->getFilters()); 
+        ?>
+        <div class="block-title filter-title" data-count="<?php /* @escapeNotVerified */ echo $filtered; ?>">
+            <strong data-role="title"><?php /* @escapeNotVerified */ echo __('Shop By') ?></strong>
+        </div>
+        <div class="block-content filter-content">
+            <?php 
+            echo $block->getChildHtml('state') ?>
+
+            <?php if ($block->getLayer()->getState()->getFilters()): ?>
+                <div class="block-actions filter-actions">
+                    <a href="<?php /* @escapeNotVerified */ echo $block->getClearUrl() ?>" class="action clear filter-clear"><span><?php /* @escapeNotVerified */ echo __('Clear All') ?></span></a>
+                </div>
+            <?php endif; ?>
+            <?php $wrapOptions = false; ?>
+            <?php 
+            foreach ($block->getFilters() as $filter): 
+                ?>
+                <?php if ($filter->getItemsCount()): ?>
+                    <?php if (!$wrapOptions): ?>
+				
+                      
+                        <div class="filter-options" id="narrow-by-list" data-role="content" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active":<?php echo $activeBlocks;?>, "multipleCollapsible": true}}'>
+							<strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?php /* @escapeNotVerified */ echo __('Shopping Options') ?></strong>
+							<input type="button" class="action tocart primary" id="refineFilter" value="Refine"/>
+							<input type="button" class="action tocart primary" id="resetFilter" value="Reset"/>
+                            <?php $wrapOptions = true;
+                        endif;
+                        ?>
+                        <div data-role="collapsible" class="filter-options-item">
+                            <div data-role="title" class="filter-options-title"><?php /* @escapeNotVerified */ echo __($filter->getName()) ?></div>
+                            <div data-role="content" class="filter-options-content"><?php /* @escapeNotVerified */ echo $block->getChildBlock('renderer')->render($filter); ?></div>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php if ($wrapOptions): ?>
+                </div>
+    <?php else: ?>
+                <script>
+                    require([
+                        'jquery'
+                    ], function ($) {
+                        $('#layered-filter-block').addClass('filter-no-options');
+                    });
+                </script>
+    <?php endif; ?>
+        </div>
+    </div>                          
+
+<?php endif; ?>
+<script>    
+    require(["jquery", 'Magento_Ui/js/modal/alert', "jquery/ui"], function ($, alert) {
+        $('#refineFilter').click(function(){
+            var selectedFilter = [];
+            $('.multifilter').each(function(index,element){
+                if($(this).is(':checked')){
+                    selectedFilter.push($(this).val());
+                }
+            });
+            var categoryFilter;
+            if ($('#filterlist .multifilter.category').is(':checked')) {
+            } else {
+                <?php if($currentCatId){ ?>
+					categoryFilter = <?php echo $currentCatId ?>;
+                 <?php } ?>
+            }
+            var sliderprice = $('#sliderprice').val();
+            if(sliderprice != ''){
+                selectedFilter.push(sliderprice);
+            }            
+            if(selectedFilter != ''){
+            $.ajax({
+                url: '<?php echo $block->getUrl("layermultifilter/category/ajax");?>',
+                type: "POST",
+                data: (categoryFilter) ? {"checkedFilter":selectedFilter,"categoryFilter":categoryFilter} : {"checkedFilter":selectedFilter},
+				showLoader: true,
+                dataType: "json",
+                success: function(data) {
+                    $('#result_data').html(data.list);
+                    $('.filter-current').html(data.content);
+                    $('#ajaxcollection').show();
+                    $('#corecollection').hide();
+                }
+            });
+            }else{
+				 alert({
+					title: false,
+					content: 'Please select at least one filter',
+					buttons: false,
+					modalClass: "multifilter-alert",
+					actions: {
+					always: function (){}
+					}
+				});
+            }
+        });
+        $('#resetFilter').click(function(){
+        $('.multifilter').each(function(index,element){
+                if($(this).is(':checked')){
+                    $(this).attr('checked',false);
+                }
+            });
+            var categoryFilter;
+            if ($('#filterlist .multifilter.category').is(':checked')) {
+            } else {
+                <?php if($currentCatId){ ?>
+                categoryFilter = <?php echo $currentCatId ?>;
+                 <?php } ?>
+            }
+            $.ajax({
+                url: '<?php echo $block->getUrl("layermultifilter/category/ajax");?>',
+                type: "POST",
+                data: (categoryFilter) ? {"categoryFilter":categoryFilter} : {},
+				showLoader: true,
+                dataType: "json",
+                success: function(data) {
+                    $('#result_data').html(data.list);
+                    $('.filter-current').html(data.content);
+                    $('#ajaxcollection').show();
+                    $('#corecollection').hide();
+                }
+            });
+        });
+        
+        $(document).on('click', '.item .action.remove', function(){
+            var idValue = $(this).parent().find(".filter-id-value").html();
+            $('.filter-options .item').find('#' + idValue).removeAttr('checked');
+            var selectedFilter = [];
+            $('.multifilter').each(function(index,element){
+                if($(this).is(':checked')){
+                    selectedFilter.push($(this).val());
+                }
+            });
+            var sliderprice = $('#sliderprice').val();
+            if(sliderprice != ''){
+                selectedFilter.push(sliderprice);
+            }
+            var categoryFilter;
+            if ($('#filterlist .multifilter.category').is(':checked')) {
+            } else {
+                <?php if($currentCatId){ ?>
+					categoryFilter = <?php echo $currentCatId ?>;
+                 <?php } ?>
+            }
+            $.ajax({
+                url: '<?php echo $block->getUrl("layermultifilter/category/ajax");?>',
+                type: "POST",
+                data: (categoryFilter) ? {"checkedFilter":selectedFilter,"categoryFilter":categoryFilter} : {"checkedFilter":selectedFilter},
+                dataType: "json",
+				showLoader: true,
+                success: function(data) {
+                    $('#result_data').html(data.list);
+                    $('.filter-current').html(data.content);
+                    $('#ajaxcollection').show();
+                    $('#corecollection').hide();
+                }
+            });
+        });
+    });    
+</script>

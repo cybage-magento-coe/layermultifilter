@@ -1,0 +1,80 @@
+<!--
+/**
+* Cybage Layermultifilter Layered Navigation Plugin
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Open Software License (OSL 3.0)
+* It is available on the World Wide Web at:
+* http://opensource.org/licenses/osl-3.0.php
+* If you are unable to access it on the World Wide Web, please send an email
+* To: Support_ecom@cybage.com.  We will send you a copy of the source file.
+*
+* @category   Layermultifilter Layered Navigation Plugin
+* @package    Cybage_Layermultifilter
+* @copyright  Copyright (c) 2014 Cybage Software Pvt. Ltd., India
+*             http://www.cybage.com/pages/centers-of-excellence/ecommerce/ecommerce.aspx
+* @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+* @author     Cybage Software Pvt. Ltd. <Support_ecom@cybage.com>
+*/
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd" >
+    <preference for="Magento\LayeredNavigation\Block\Navigation\State" type="Cybage\Layermultifilter\Block\Navigation\State" />
+    <preference for="Magento\LayeredNavigation\Block\Navigation" type="Cybage\Layermultifilter\Block\Navigation" />
+    <preference for="Magento\LayeredNavigation\Block\Navigation\Category" type="Cybage\Layermultifilter\Block\Navigation\Category" />
+    <virtualType name="Cybage\Layermultifilter\Block\Navigation\Category" type="Cybage\Layermultifilter\Block\Navigation">
+        <arguments>
+            <argument name="filterList" xsi:type="object">categoryFilterList</argument>
+        </arguments>
+    </virtualType>
+    <preference for="Magento\LayeredNavigation\Block\Navigation\FilterRenderer" type="Cybage\Layermultifilter\Block\Navigation\FilterRenderer" />
+    <preference for="Magento\Catalog\Block\Product\ProductList\Toolbar" type="Cybage\Layermultifilter\Block\Product\Customtoolbar" />
+    <type name="Magento\Catalog\Controller\Category\View">
+        <plugin name="product-cont-block-module" type="Cybage\Layermultifilter\Controller\Category\View" sortOrder="10"/>
+    </type>
+    <virtualType name="Cybage\Layermultifilter\Model\Session\Storage" type="Magento\Framework\Session\Storage">
+        <arguments>
+            <argument name="namespace" xsi:type="string">multifilter</argument>
+        </arguments>
+    </virtualType>
+     <virtualType name="Cybage\Layermultifilter\Model\Session" type="Magento\Framework\Session\Generic">
+        <arguments>
+            <argument name="storage" xsi:type="object">Cybage\Layermultifilter\Model\Session\Storage</argument>
+        </arguments>
+    </virtualType>
+    <type name="Cybage\Layermultifilter\Controller\Category\Ajax">
+        <arguments>
+            <argument name="multifilterSession" xsi:type="object">Cybage\Layermultifilter\Model\Session</argument>
+        </arguments>
+    </type>
+    <type name="Cybage\Layermultifilter\Block\Product\AjaxProduct">
+        <arguments>
+            <argument name="multifilterSession" xsi:type="object">Cybage\Layermultifilter\Model\Session</argument>
+        </arguments>
+    </type>
+    <type name="Cybage\Layermultifilter\Block\Product\Customtoolbar">
+        <arguments>
+            <argument name="multifilterSession" xsi:type="object">Cybage\Layermultifilter\Model\Session</argument>
+        </arguments>
+    </type>
+    <type name="Cybage\Layermultifilter\Controller\Category\View">
+        <arguments>
+            <argument name="multifilterSession" xsi:type="object">Cybage\Layermultifilter\Model\Session</argument>
+        </arguments>
+    </type>
+      <type name="Cybage\Layermultifilter\Block\Navigation\FilterRenderer">
+        <arguments>
+            <argument name="multifilterSession" xsi:type="object">Cybage\Layermultifilter\Model\Session</argument>
+        </arguments>
+    </type>
+    <type name="Cybage\Layermultifilter\Block\Navigation\State">
+        <arguments>
+            <argument name="multifilterSession" xsi:type="object">Cybage\Layermultifilter\Model\Session</argument>
+        </arguments>
+    </type>
+    <type name="Cybage\Layermultifilter\Helper\Data">
+        <arguments>
+            <argument name="multifilterSession" xsi:type="object">Cybage\Layermultifilter\Model\Session</argument>
+        </arguments>
+    </type>
+</config>

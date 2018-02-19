@@ -1,0 +1,134 @@
+<?php
+/**
+ * Cybage Layermultifilter Layered Navigation Plugin
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * It is available on the World Wide Web at:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you are unable to access it on the World Wide Web, please send an email
+ * To: Support_ecom@cybage.com.  We will send you a copy of the source file.
+ *
+ * @category   Layermultifilter Layered Navigation Plugin
+ * @package    Cybage_Layermultifilter
+ * @copyright  Copyright (c) 2014 Cybage Software Pvt. Ltd., India
+ *             http://www.cybage.com/pages/centers-of-excellence/ecommerce/ecommerce.aspx
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author     Cybage Software Pvt. Ltd. <Support_ecom@cybage.com>
+ */
+?>
+<?php
+/**
+ * Template for filter items block
+ *
+ * @var $block \Magento\LayeredNavigation\Block\Navigation\FilterRenderer
+ */
+$categories =  $block->getSessionCategories();
+if(empty($categories)) {
+    $categories =[];
+}
+$attributes =  $block->getSessionAttributes();
+$vals = [];
+if(!empty($attributes)) {
+    foreach ($attributes as $data) {        
+        $vals[] = $data['value'];
+    }
+}
+?>
+<?php
+$priceDisplayMode = $this->helper('Cybage\Layermultifilter\Helper\Data')->getConfig('multifilter/general/display_mode');
+if ($filter->getName() == 'Price' && $priceDisplayMode == 'slider'):
+    ?>
+    <?php     
+    $range = $this->getPriceRange($filter);
+    if(array_key_exists('price', $vals)) {
+        $price = explode('-', $vals['price']);
+        $range['min'] = $price[0];
+        $range['max'] = $price[1];
+    }?>
+    <?php $url = $this->getFilterUrl($filter); ?>
+    <script>
+        var price_url = "<?= $url; ?>";
+        require([
+            'jquery',
+            "jquery/ui",
+            'domReady!'
+        ], function($){
+            var selectedFilter = [];
+            //     `use strict`;
+            console.log("Price Slider..!");
+            //require(["jquery" , "jquery/jquery-ui"], function($){
+            // ...
+            $("div#price-slider").slider({
+                range: true,
+                min: <?= $range['min'] ?>,
+                max: <?= $range['max'] ?>,
+                values: [ <?= $range['min'] ?>, <?= $range['max'] ?> ],
+                slide: function( event, ui ) {
+                    $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+                },
+                change: function( event, ui ) {
+                    var text = "attribute?price?";
+                    $('#sliderprice').val(text+ui.values[0]+"-"+ui.values[1]);
+                }
+            });
+            $( "#amount" ).val( "$" + $( "#price-slider" ).slider( "values", 0 ) +
+                " - $" + $( "#price-slider" ).slider( "values", 1 ) );
+            
+        });
+    </script>
+    <?php ?>      
+    <p>
+        <input type="text" id="amount" readonly style="border:0; color:#1979c3; font-weight:bold;">
+    </p>
+    <div id="price-slider"></div>
+
+<?php else: ?>
+    <ol class="items">
+        <?php
+        $showProductCount = $this->helper('Cybage\Layermultifilter\Helper\Data')->getConfig('multifilter/general/product_count');
+        foreach ($filterItems as $filterItem):
+           
+            $parameters = substr($filterItem->getUrl(), strpos($filterItem->getUrl(), "?") + 1);
+            $arr = explode('=', $parameters);
+            ?>
+            <li class="item" id="filterlist">
+                <?php if ($arr[0] == 'cat'): ?>
+                    <input type="checkbox" id="<?php echo $arr[1]; ?>" class="multifilter category" value="<?php echo 'category' . '?' . $arr[0] . '?' . $arr[1]; ?>" <?php if(in_array($arr[1], $categories)) echo "checked";?>>
+                <?php else: ?>
+                    <input type="checkbox" id="<?php echo $arr[1]; ?>" class="multifilter" value="<?php echo 'attribute' . '?' . $arr[0] . '?' . $arr[1]; ?>" <?php if(in_array($arr[1], $vals)) echo "checked";?>>
+                <?php endif; ?>
+                    <input type="hidden" id="sliderprice" class="multifilter" value="">
+                <?php if ($filterItem->getCount() > 0):
+                    ?>
+                    <a href="javascript:void(0)">
+                        <?php /* @escapeNotVerified */ echo $filterItem->getLabel() ?>
+                        <?php
+                        if ($showProductCount == '1') {
+                            if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()):
+                                ?>
+                                <span class="count"><?php /* @escapeNotVerified */ echo $filterItem->getCount() ?><span class="filter-count-label">
+                                        <?php if ($filterItem->getCount() == 1): ?> <?php /* @escapeNotVerified */ echo __('item') ?><?php else: ?> <?php /* @escapeNotVerified */ echo __('items') ?><?php endif; ?></span></span>
+                                <?php
+                            endif;
+                        }
+                        ?>
+                    </a>
+                <?php else: ?>
+                    <?php /* @escapeNotVerified */ echo $filterItem->getLabel() ?>
+                    <?php
+                    if ($showProductCount == '1') {
+                        if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()):
+                            ?>
+                            <span class="count"><?php /* @escapeNotVerified */ echo $filterItem->getCount() ?><span class="filter-count-label">
+                                    <?php if ($filterItem->getCount() == 1): ?><?php /* @escapeNotVerified */ echo __('item') ?><?php else: ?><?php /* @escapeNotVerified */ echo __('items') ?><?php endif; ?></span></span>
+                                    <?php
+                                endif;
+                            }
+                            ?>
+                        <?php endif; ?>
+            </li>
+        <?php endforeach ?>
+    </ol>
+<?php endif; ?>

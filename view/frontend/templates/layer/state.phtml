@@ -1,0 +1,44 @@
+<?php
+/**
+ * Cybage Layermultifilter Layered Navigation Plugin
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * It is available on the World Wide Web at:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you are unable to access it on the World Wide Web, please send an email
+ * To: Support_ecom@cybage.com.  We will send you a copy of the source file.
+ *
+ * @category   Layermultifilter Layered Navigation Plugin
+ * @package    Cybage_Layermultifilter
+ * @copyright  Copyright (c) 2014 Cybage Software Pvt. Ltd., India
+ *             http://www.cybage.com/pages/centers-of-excellence/ecommerce/ecommerce.aspx
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author     Cybage Software Pvt. Ltd. <Support_ecom@cybage.com>
+ */
+?>
+<?php 
+$_filters = $block->getActiveFilters();
+?>
+<div class="filter-current">
+    <?php if (!empty($_filters)): ?>
+        <strong class="block-subtitle filter-current-subtitle"
+                role="heading"
+                aria-level="2"
+                data-count="<?php echo count($_filters); ?>"><?php /* @escapeNotVerified */ echo __('Now Shopping by') ?></strong>
+        <ol class="items">
+            <?php foreach ($_filters as $_filter): ?>
+                <li class="item">
+                    <span class="filter-label"><?php echo $block->getFilterLabel($_filter); ?></span>
+                    <span class="filter-value"><?php /* @escapeNotVerified */ echo $block->getFilterValueName($_filter); ?></span>
+                    <span class="filter-id-value" style="display:none;"><?php echo $block->getFilterId($_filter); ?></span>
+                    <a class="action remove"
+                        title="<?php /* @escapeNotVerified */ echo $block->escapeHtml(__('Remove'))?>">
+                         <span><?php /* @escapeNotVerified */ echo __('Remove This Item') ?></span>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ol>
+    <?php endif; ?>
+</div>

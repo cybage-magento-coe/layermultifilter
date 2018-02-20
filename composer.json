@@ -1,5 +1,5 @@
 {
-    "name": "cybage/layermultifilter",
+    "name": "cyb/layermultifilter",
     "description": "A cybage extension for multiple layered navigation.",
     "type": "magento2-module",
     "version": "2.0.4",

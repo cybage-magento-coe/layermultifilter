@@ -1,6 +1,6 @@
 <?php
 /**
- * Cybage Multifilter Layered Navigation Plugin
+ * Cybage Layermultifilter Layered Navigation Plugin
  *
  * NOTICE OF LICENSE
  *
@@ -10,8 +10,8 @@
  * If you are unable to access it on the World Wide Web, please send an email
  * To: Support_ecom@cybage.com.  We will send you a copy of the source file.
  *
- * @category   Multifilter Layered Navigation Plugin
- * @package    Cybage_Multifilter
+ * @category   Layermultifilter Layered Navigation Plugin
+ * @package    Cybage_Layermultifilter
  * @copyright  Copyright (c) 2014 Cybage Software Pvt. Ltd., India
  *             http://www.cybage.com/pages/centers-of-excellence/ecommerce/ecommerce.aspx
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)

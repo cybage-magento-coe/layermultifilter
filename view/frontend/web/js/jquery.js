@@ -1,78 +1,82 @@
-/*!
- * jQuery JavaScript Library v1.11.0
- * http://jquery.com/
+/**
+ * Cybage Layermultifilter Layered Navigation Plugin
  *
- * Includes Sizzle.js
- * http://sizzlejs.com/
+ * NOTICE OF LICENSE
  *
- * Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
- * Released under the MIT license
- * http://jquery.org/license
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * It is available on the World Wide Web at:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you are unable to access it on the World Wide Web, please send an email
+ * To: Support_ecom@cybage.com.  We will send you a copy of the source file.
  *
- * Date: 2014-01-23T21:02Z
+ * @category   Layermultifilter Layered Navigation Plugin
+ * @package    Cybage_Layermultifilter
+ * @copyright  Copyright (c) 2016 Cybage Software Pvt. Ltd., India
+ *             http://www.cybage.com/pages/centers-of-excellence/ecommerce/ecommerce.aspx
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author     Cybage Software Pvt. Ltd. <Support_ecom@cybage.com>
  */
 
 (function( global, factory ) {
 
-	if ( typeof module === "object" && typeof module.exports === "object" ) {
-		// For CommonJS and CommonJS-like environments where a proper window is present,
-		// execute the factory and get jQuery
-		// For environments that do not inherently posses a window with a document
-		// (such as Node.js), expose a jQuery-making factory as module.exports
-		// This accentuates the need for the creation of a real window
-		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info
-		module.exports = global.document ?
-			factory( global, true ) :
-			function( w ) {
-				if ( !w.document ) {
-					throw new Error( "jQuery requires a window with a document" );
-				}
-				return factory( w );
-			};
-	} else {
-		factory( global );
-	}
+    if ( typeof module === "object" && typeof module.exports === "object" ) {
+            // For CommonJS and CommonJS-like environments where a proper window is present,
+            // execute the factory and get jQuery
+            // For environments that do not inherently posses a window with a document
+            // (such as Node.js), expose a jQuery-making factory as module.exports
+            // This accentuates the need for the creation of a real window
+            // e.g. var jQuery = require("jquery")(window);
+            // See ticket #14549 for more info
+            module.exports = global.document ?
+                    factory( global, true ) :
+                    function( w ) {
+                            if ( !w.document ) {
+                                    throw new Error( "jQuery requires a window with a document" );
+                            }
+                            return factory( w );
+                    };
+    } else {
+            factory( global );
+    }
 
 // Pass this if window is not defined yet
 }(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
 
-// Can't do this because several apps including ASP.NET trace
-// the stack via arguments.caller.callee and Firefox dies if
-// you try to trace through "use strict" call chains. (#13335)
-// Support: Firefox 18+
-//
+    // Can't do this because several apps including ASP.NET trace
+    // the stack via arguments.caller.callee and Firefox dies if
+    // you try to trace through "use strict" call chains. (#13335)
+    // Support: Firefox 18+
+    //
 
-var deletedIds = [];
+    var deletedIds = [];
 
-var slice = deletedIds.slice;
+    var slice = deletedIds.slice;
 
-var concat = deletedIds.concat;
+    var concat = deletedIds.concat;
 
-var push = deletedIds.push;
+    var push = deletedIds.push;
 
-var indexOf = deletedIds.indexOf;
+    var indexOf = deletedIds.indexOf;
 
-var class2type = {};
+    var class2type = {};
 
-var toString = class2type.toString;
+    var toString = class2type.toString;
 
-var hasOwn = class2type.hasOwnProperty;
+    var hasOwn = class2type.hasOwnProperty;
 
-var trim = "".trim;
+    var trim = "".trim;
 
-var support = {};
+    var support = {};
 
 
 
-var
-	version = "1.11.0",
+    var version = "1.11.0",
 
-	// Define a local copy of jQuery
-	jQuery = function( selector, context ) {
-		// The jQuery object is actually just the init constructor 'enhanced'
-		// Need init if jQuery is called (just allow error to be thrown if not included)
-		return new jQuery.fn.init( selector, context );
+        // Define a local copy of jQuery
+        jQuery = function( selector, context ) {
+            // The jQuery object is actually just the init constructor 'enhanced'
+            // Need init if jQuery is called (just allow error to be thrown if not included)
+            return new jQuery.fn.init( selector, context );
 	},
 
 	// Make sure we trim BOM and NBSP (here's looking at you, Safari 5.0 and IE)
@@ -87,157 +91,155 @@ var
 		return letter.toUpperCase();
 	};
 
-jQuery.fn = jQuery.prototype = {
-	// The current version of jQuery being used
-	jquery: version,
+        jQuery.fn = jQuery.prototype = {
+            // The current version of jQuery being used
+            jquery: version,
 
-	constructor: jQuery,
+            constructor: jQuery,
 
-	// Start with an empty selector
-	selector: "",
+            // Start with an empty selector
+            selector: "",
 
-	// The default length of a jQuery object is 0
-	length: 0,
+            // The default length of a jQuery object is 0
+            length: 0,
 
-	toArray: function() {
-		return slice.call( this );
-	},
+            toArray: function() {
+                return slice.call( this );
+            },
 
-	// Get the Nth element in the matched element set OR
-	// Get the whole matched element set as a clean array
-	get: function( num ) {
-		return num != null ?
+            // Get the Nth element in the matched element set OR
+            // Get the whole matched element set as a clean array
+            get: function( num ) {
+                return num != null ?
+                // Return a 'clean' array
+                ( num < 0 ? this[ num + this.length ] : this[ num ] ) :
+                // Return just the object
+                slice.call( this );
+            },
 
-			// Return a 'clean' array
-			( num < 0 ? this[ num + this.length ] : this[ num ] ) :
+            // Take an array of elements and push it onto the stack
+            // (returning the new matched element set)
+            pushStack: function( elems ) {
 
-			// Return just the object
-			slice.call( this );
-	},
+                // Build a new jQuery matched element set
+                var ret = jQuery.merge( this.constructor(), elems );
 
-	// Take an array of elements and push it onto the stack
-	// (returning the new matched element set)
-	pushStack: function( elems ) {
+                // Add the old object onto the stack (as a reference)
+                ret.prevObject = this;
+                ret.context = this.context;
 
-		// Build a new jQuery matched element set
-		var ret = jQuery.merge( this.constructor(), elems );
+                // Return the newly-formed element set
+                return ret;
+            },
 
-		// Add the old object onto the stack (as a reference)
-		ret.prevObject = this;
-		ret.context = this.context;
+            // Execute a callback for every element in the matched set.
+            // (You can seed the arguments with an array of args, but this is
+            // only used internally.)
+            each: function( callback, args ) {
+                    return jQuery.each( this, callback, args );
+            },
 
-		// Return the newly-formed element set
-		return ret;
-	},
+            map: function( callback ) {
+                    return this.pushStack( jQuery.map(this, function( elem, i ) {
+                            return callback.call( elem, i, elem );
+                    }));
+            },
 
-	// Execute a callback for every element in the matched set.
-	// (You can seed the arguments with an array of args, but this is
-	// only used internally.)
-	each: function( callback, args ) {
-		return jQuery.each( this, callback, args );
-	},
+            slice: function() {
+                    return this.pushStack( slice.apply( this, arguments ) );
+            },
 
-	map: function( callback ) {
-		return this.pushStack( jQuery.map(this, function( elem, i ) {
-			return callback.call( elem, i, elem );
-		}));
-	},
+            first: function() {
+                    return this.eq( 0 );
+            },
 
-	slice: function() {
-		return this.pushStack( slice.apply( this, arguments ) );
-	},
+            last: function() {
+                    return this.eq( -1 );
+            },
 
-	first: function() {
-		return this.eq( 0 );
-	},
+            eq: function( i ) {
+                    var len = this.length,
+                            j = +i + ( i < 0 ? len : 0 );
+                    return this.pushStack( j >= 0 && j < len ? [ this[j] ] : [] );
+            },
 
-	last: function() {
-		return this.eq( -1 );
-	},
+            end: function() {
+                    return this.prevObject || this.constructor(null);
+            },
 
-	eq: function( i ) {
-		var len = this.length,
-			j = +i + ( i < 0 ? len : 0 );
-		return this.pushStack( j >= 0 && j < len ? [ this[j] ] : [] );
-	},
+            // For internal use only.
+            // Behaves like an Array's method, not like a jQuery method.
+            push: push,
+            sort: deletedIds.sort,
+            splice: deletedIds.splice
+        };
 
-	end: function() {
-		return this.prevObject || this.constructor(null);
-	},
+        jQuery.extend = jQuery.fn.extend = function() {
+            var src, copyIsArray, copy, name, options, clone,
+                    target = arguments[0] || {},
+                    i = 1,
+                    length = arguments.length,
+                    deep = false;
 
-	// For internal use only.
-	// Behaves like an Array's method, not like a jQuery method.
-	push: push,
-	sort: deletedIds.sort,
-	splice: deletedIds.splice
-};
+            // Handle a deep copy situation
+            if ( typeof target === "boolean" ) {
+                    deep = target;
 
-jQuery.extend = jQuery.fn.extend = function() {
-	var src, copyIsArray, copy, name, options, clone,
-		target = arguments[0] || {},
-		i = 1,
-		length = arguments.length,
-		deep = false;
+                    // skip the boolean and the target
+                    target = arguments[ i ] || {};
+                    i++;
+            }
 
-	// Handle a deep copy situation
-	if ( typeof target === "boolean" ) {
-		deep = target;
+            // Handle case when target is a string or something (possible in deep copy)
+            if ( typeof target !== "object" && !jQuery.isFunction(target) ) {
+                    target = {};
+            }
 
-		// skip the boolean and the target
-		target = arguments[ i ] || {};
-		i++;
-	}
+            // extend jQuery itself if only one argument is passed
+            if ( i === length ) {
+                    target = this;
+                    i--;
+            }
 
-	// Handle case when target is a string or something (possible in deep copy)
-	if ( typeof target !== "object" && !jQuery.isFunction(target) ) {
-		target = {};
-	}
+            for ( ; i < length; i++ ) {
+                // Only deal with non-null/undefined values
+                if ( (options = arguments[ i ]) != null ) {
+                    // Extend the base object
+                    for ( name in options ) {
+                        src = target[ name ];
+                        copy = options[ name ];
 
-	// extend jQuery itself if only one argument is passed
-	if ( i === length ) {
-		target = this;
-		i--;
-	}
+                        // Prevent never-ending loop
+                        if ( target === copy ) {
+                                continue;
+                        }
 
-	for ( ; i < length; i++ ) {
-		// Only deal with non-null/undefined values
-		if ( (options = arguments[ i ]) != null ) {
-			// Extend the base object
-			for ( name in options ) {
-				src = target[ name ];
-				copy = options[ name ];
+                        // Recurse if we're merging plain objects or arrays
+                        if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
+                            if ( copyIsArray ) {
+                                    copyIsArray = false;
+                                    clone = src && jQuery.isArray(src) ? src : [];
 
-				// Prevent never-ending loop
-				if ( target === copy ) {
-					continue;
-				}
+                            } else {
+                                    clone = src && jQuery.isPlainObject(src) ? src : {};
+                            }
 
-				// Recurse if we're merging plain objects or arrays
-				if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
-					if ( copyIsArray ) {
-						copyIsArray = false;
-						clone = src && jQuery.isArray(src) ? src : [];
+                            // Never move original objects, clone them
+                            target[ name ] = jQuery.extend( deep, clone, copy );
 
-					} else {
-						clone = src && jQuery.isPlainObject(src) ? src : {};
-					}
+                        // Don't bring in undefined values
+                        } else if ( copy !== undefined ) {
+                            target[ name ] = copy;
+                        }
+                    }
+                }
+            }
 
-					// Never move original objects, clone them
-					target[ name ] = jQuery.extend( deep, clone, copy );
+            // Return the modified object
+            return target;
+        };
 
-				// Don't bring in undefined values
-				} else if ( copy !== undefined ) {
-					target[ name ] = copy;
-				}
-			}
-		}
-	}
-
-	// Return the modified object
-	return target;
-};
-
-jQuery.extend({
+    jQuery.extend({
 	// Unique for each copy of jQuery on the page
 	expando: "jQuery" + ( version + Math.random() ).replace( /\D/g, "" ),
 
@@ -569,7 +571,7 @@ jQuery.extend({
 	// jQuery.support is not used in Core but other projects attach their
 	// properties to it so it needs to exist.
 	support: support
-});
+    });
 
 // Populate the class2type map
 jQuery.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {

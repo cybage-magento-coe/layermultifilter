@@ -72,11 +72,14 @@ class AjaxProduct extends \Magento\Catalog\Block\Product\ListProduct implements 
     public $coreRegistry = null;
 
     /**
-     * @param Context $context
+     * 
+     * @param \Magento\Catalog\Block\Product\Context $context
      * @param \Magento\Framework\Data\Helper\PostHelper $postDataHelper
      * @param \Magento\Catalog\Model\Layer\Resolver $layerResolver
      * @param CategoryRepositoryInterface $categoryRepository
      * @param \Magento\Framework\Url\Helper\Data $urlHelper
+     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param \Magento\Framework\Registry $coreRegistry
      * @param array $data
      */
     public function __construct(

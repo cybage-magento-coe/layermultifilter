@@ -52,8 +52,14 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
     protected $_attributeOptionCollection;
 
     /**
+     * 
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Catalog\Model\Layer\Resolver $layerResolver
+     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param \Magento\Catalog\Model\CategoryRepository $categoryRepository
+     * @param \Magento\Eav\Model\Entity\Attribute $entityAttribute
+     * @param \Magento\Catalog\Model\Product\Attribute\Repository $productAttributeRepository
+     * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection $attributeOptionCollection
      * @param array $data
      */
     public function __construct(

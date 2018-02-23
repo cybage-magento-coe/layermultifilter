@@ -23,7 +23,7 @@
     <body>
         <attribute name="class" value="page-with-filter"/>
         <referenceContainer name="sidebar.main">
-             <block class="Magento\LayeredNavigation\Block\Navigation\Category" name="catalog.leftnav" before="-" template="layer/view.phtml">
+            <block class="Magento\LayeredNavigation\Block\Navigation\Category" name="catalog.leftnav" before="-" template="layer/view.phtml">
                 <block class="Magento\LayeredNavigation\Block\Navigation\State" name="catalog.navigation.state" as="state" template="layer/state.phtml"/>
                 <block class="Magento\LayeredNavigation\Block\Navigation\FilterRenderer" name="catalog.navigation.renderer" as="renderer" template="layer/filter.phtml"/>
             </block>

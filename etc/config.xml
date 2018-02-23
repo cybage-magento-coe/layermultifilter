@@ -21,11 +21,11 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
-        <layermultifilter>
+        <multifilter>
             <general>
                 <active>1</active>
                 <display_mode>slider</display_mode>
             </general>
-        </layermultifilter>
+        </multifilter>
     </default>
 </config>

@@ -18,7 +18,7 @@
  * @author     Cybage Software Pvt. Ltd. <Support_ecom@cybage.com>
  */
 ?>
-<?php 
+<?php
 $_filters = $block->getActiveFilters();
 ?>
 <div class="filter-current">
@@ -34,8 +34,8 @@ $_filters = $block->getActiveFilters();
                     <span class="filter-value"><?php /* @escapeNotVerified */ echo $block->getFilterValueName($_filter); ?></span>
                     <span class="filter-id-value" style="display:none;"><?php echo $block->getFilterId($_filter); ?></span>
                     <a class="action remove"
-                        title="<?php /* @escapeNotVerified */ echo $block->escapeHtml(__('Remove'))?>">
-                         <span><?php /* @escapeNotVerified */ echo __('Remove This Item') ?></span>
+                       title="<?php /* @escapeNotVerified */ echo $block->escapeHtml(__('Remove')) ?>">
+                        <span><?php /* @escapeNotVerified */ echo __('Remove This Item') ?></span>
                     </a>
                 </li>
             <?php endforeach; ?>

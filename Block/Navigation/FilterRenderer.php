@@ -26,8 +26,17 @@ use Cybage\Layermultifilter\Block\Navigation\FilterRendererInterface;
 
 class FilterRenderer extends Template implements FilterRendererInterface
 {
+    /**
+     * Constant for min price
+     */
     const MINPRICE = 0;
+    /**
+     * Constant for max price
+     */
     const MAXPRICE = 0;
+    /**
+     * Constant for generic price
+     */
     const GENERICPRICE = 10000000000;
     /**
      * Logging instance
@@ -41,6 +50,14 @@ class FilterRenderer extends Template implements FilterRendererInterface
      */
     protected $_multifilterSession;
     
+    /**
+     * 
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Cybage\Layermultifilter\Helper\Data $helper
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param array $data
+     */
     public function __construct(
         Template\Context $context,
         \Cybage\Layermultifilter\Helper\Data $helper,

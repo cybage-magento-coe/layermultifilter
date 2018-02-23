@@ -126,7 +126,7 @@ if ($block->getCollection()->getSize()):
         jQuery('#ajaxloader').show();
         jQuery('#overlaydiv').show();
         jQuery.ajax({
-            url: '<?php echo $block->getUrl("multifilter/category/ajax");?>',
+            url: '<?php echo $block->getUrl("layermultifilter/category/ajax");?>',
             type: "POST",
             data: {"currentLimit":value.value,"checkedFilter":selectedFilter,"categoryFilter":categoryFilter},
             dataType: "json",
@@ -157,7 +157,7 @@ if ($block->getCollection()->getSize()):
         jQuery('#ajaxloader').show();
         jQuery('#overlaydiv').show();
         jQuery.ajax({
-            url: '<?php echo $block->getUrl("multifilter/category/ajax");?>',
+            url: '<?php echo $block->getUrl("layermultifilter/category/ajax");?>',
             type: "POST",
             data: {"currentLimit":jQuery('#limiter').val(),"currentSortOpt":value.value,"checkedFilter":selectedFilter,"categoryFilter":categoryFilter},
             dataType: "json",
@@ -189,7 +189,7 @@ if ($block->getCollection()->getSize()):
         jQuery('#ajaxloader').show();
         jQuery('#overlaydiv').show();
         jQuery.ajax({
-            url: '<?php echo $block->getUrl("multifilter/category/ajax");?>',
+            url: '<?php echo $block->getUrl("layermultifilter/category/ajax");?>',
             type: "POST",
             data: {"currentLimit":jQuery('#limiter').val(),"currentSortOpt":jQuery('#sorter').val(),"checkedFilter":selectedFilter,"viewmode":value,"categoryFilter":categoryFilter},
             dataType: "json",

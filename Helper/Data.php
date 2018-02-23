@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cybage Layermultifilter Layered Navigation Plugin
  *
@@ -20,8 +21,8 @@
 
 namespace Cybage\Layermultifilter\Helper;
 
-class Data extends \Magento\Framework\App\Helper\AbstractHelper
-{
+class Data extends \Magento\Framework\App\Helper\AbstractHelper {
+
     /**
      * @var \Magento\Framework\Session\Generic
      */
@@ -43,23 +44,23 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     protected $_scopeConfig;
-    
-     /**
+
+    /**
      * @var \Magento\Catalog\Model\CategoryRepository
      */
     protected $_categoryRepository;
 
     /**
-     * @param Context $context
-     * @param \Magento\Framework\Session\Generic $session
+     * 
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param \Magento\Framework\Registry $coreRegistry
+     * @param \Magento\Catalog\Model\Product $productModel
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param \Magento\Catalog\Model\CategoryRepository $categoryRepository
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\Session\Generic $multifilterSession,
-        \Magento\Framework\Registry $coreRegistry,
-        \Magento\Catalog\Model\Product $productModel,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Catalog\Model\CategoryRepository $categoryRepository
+    \Magento\Framework\App\Action\Context $context, \Magento\Framework\Session\Generic $multifilterSession, \Magento\Framework\Registry $coreRegistry, \Magento\Catalog\Model\Product $productModel, \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig, \Magento\Catalog\Model\CategoryRepository $categoryRepository
     ) {
         $this->_multifilterSession = $multifilterSession;
         $this->_coreRegistry = $coreRegistry;
@@ -67,17 +68,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->_scopeConfig = $scopeConfig;
         $this->_categoryRepository = $categoryRepository;
     }
+
     /**
      * Functionality to get configuration values of plugin
      *
      * @param $configPath: System xml config path
      * @return value of requested configuration
      */
-    public function getConfig($configPath)
-    {
+    public function getConfig($configPath) {
         return $this->_scopeConfig->getValue($configPath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
-    
+
     /**
      * Function to fetch product collection based on selected filters
      *
@@ -85,8 +86,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param $attributes: array of selected attributes
      * @return array of product collection
      */
-    public function getProducts($categories, $attributes)
-    {
+    public function getProducts($categories, $attributes) {
         $registerCat = '';
         $currentCat = $this->_coreRegistry->registry('current_category');
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
@@ -99,16 +99,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
         $collection = $this->_productModel->getCollection();
         $collection->joinField(
-            'category_id',
-            'catalog_category_product',
-            'category_id',
-            'product_id = entity_id',
-            null
+                'category_id', 'catalog_category_product', 'category_id', 'product_id = entity_id', null
         );
         if (!empty($registerCat)) {
             $collection->addFieldToFilter(
-                'category_id',
-                array('in' => $registerCat)
+                    'category_id', array('in' => $registerCat)
             );
         } else {
             $childCategories = $currentCat->getChildrenCategories();
@@ -117,17 +112,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             }
             if (!empty($childCategoryValue) && is_array($childCategoryValue)) {
                 $collection->addFieldToFilter(
-                    'category_id',
-                    array('in' => $childCategoryValue)
+                        'category_id', array('in' => $childCategoryValue)
                 );
             } else {
                 $collection->addFieldToFilter(
-                    'category_id',
-                    $currentCat->getId()
+                        'category_id', $currentCat->getId()
                 );
             }
         }
-       
+
         if (!empty($attributes)) {
             $finalArr = array();
             $vals = array();
@@ -179,7 +172,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $flat = call_user_func_array('array_merge_recursive', $filterData);
             $uniq = array_values(array_unique($flat));
         }
-       
+
         if (!empty($finalArr)) {
             $implodedArr = array_unique($finalArr);
             return $implodedArr;
@@ -194,25 +187,21 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param $implodedArr: array of childs from getProducts() function
      * @return array of parent product collection
      */
-    public function getParentCollection($implodedArr, $activeLimit, $activeSortOpt)
-    {
-		$productCollection = $this->_productModel->getCollection();
-		
-		if(empty($implodedArr))
-		{
-			$implodedArr = array(0);
-		}
-		
-        if (!empty($implodedArr))
-		{            
+    public function getParentCollection($implodedArr, $activeLimit, $activeSortOpt) {
+        $productCollection = $this->_productModel->getCollection();
+
+        if (empty($implodedArr)) {
+            $implodedArr = array(0);
+        }
+
+        if (!empty($implodedArr)) {
             $productCollection->addFieldToFilter('entity_id', array($implodedArr));
             $productCollection->addAttributeToSelect('*');
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
             $objectManager->get('\Magento\Framework\Session\SessionManager')->settotalCount(count($productCollection->getData()));
             $page = $objectManager->get('\Magento\Framework\Session\SessionManager')->getCurrentPage();
-            
-			if ($page > 1 && !empty($page))
-			{
+
+            if ($page > 1 && !empty($page)) {
                 $lastLimit = $activeLimit * $page + 1;
                 $firstLimit = $activeLimit + 1;
                 $productCollection->setCurPage($page);
@@ -225,15 +214,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 }
             }
 
-            if ($activeSortOpt)
-			{
+            if ($activeSortOpt) {
                 $productCollection->addAttributeToSort("{$activeSortOpt}", 'DESC');
             }
 
-			return $productCollection;
-        } else 
-		{
-			return $implodedArr;
+            return $productCollection;
+        } else {
+            return $implodedArr;
         }
     }
 
@@ -243,11 +230,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param $attributeCode: attribute code
      * @return attribute frontend type
      */
-    public function checkAttribute($attributeCode)
-    {
+    public function checkAttribute($attributeCode) {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $attributeColl = $objectManager->get('\Magento\Catalog\Model\Product\Attribute\Repository')->get($attributeCode);
         $frontendType = $attributeColl->getFrontendInput();
         return $frontendType;
     }
+
 }

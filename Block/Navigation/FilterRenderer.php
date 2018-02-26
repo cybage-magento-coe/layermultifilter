@@ -42,16 +42,16 @@ class FilterRenderer extends Template implements FilterRendererInterface
      * Logging instance
      * @var \Psr\Log\LoggerInterface
      */
-    protected $_logger;
+    private $logger;
 
     /**
      *
      * @var \Magento\Framework\Session\Generic
      */
-    protected $_multifilterSession;
+    private $multifilterSession;
     
     /**
-     * 
+     *
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Cybage\Layermultifilter\Helper\Data $helper
      * @param \Psr\Log\LoggerInterface $logger
@@ -60,15 +60,14 @@ class FilterRenderer extends Template implements FilterRendererInterface
      */
     public function __construct(
         Template\Context $context,
-        \Cybage\Layermultifilter\Helper\Data $helper,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Session\Generic $multifilterSession,
         array $data = []
     ) {
 
         parent::__construct($context, $data);
-        $this->_multifilterSession = $multifilterSession;
-        $this->_logger = $logger;
+        $this->multifilterSession = $multifilterSession;
+        $this->logger = $logger;
     }
 
     /**
@@ -86,12 +85,13 @@ class FilterRenderer extends Template implements FilterRendererInterface
     /**
      * Function to get min max price range of current filter
      *
-     * @param $filter: filter instance
+     * @param $filter filter instance
      * @return array of filter price
      */
     public function getPriceRange($filter)
     {
-        $filterPrice = array('min' => self::MINPRICE, 'max' => self::MAXPRICE);
+        $filterPrice['min'] = self::MINPRICE;
+        $filterPrice['max'] = self::MAXPRICE;
         if ($filter->getName() == 'Price') {
             $priceArr = $filter->getResource()->loadPrices(self::GENERICPRICE);
             $filterPrice['min'] = reset($priceArr);
@@ -105,7 +105,7 @@ class FilterRenderer extends Template implements FilterRendererInterface
      * @param $filter: filter instance
      * @return filter url
      */
-    public function getFilterUrl($filter)
+    public function getFilterUrl()
     {
         $query = ['price' => ''];
         return $this->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true, '_query' => $query]);
@@ -116,7 +116,7 @@ class FilterRenderer extends Template implements FilterRendererInterface
      */
     public function getSessionCategories()
     {
-        return $this->_multifilterSession->getCategories();
+        return $this->multifilterSession->getCategories();
     }
     
     /**
@@ -124,6 +124,6 @@ class FilterRenderer extends Template implements FilterRendererInterface
      */
     public function getSessionAttributes()
     {
-        return $this->_multifilterSession->getAtrributes();
+        return $this->multifilterSession->getAtrributes();
     }
 }

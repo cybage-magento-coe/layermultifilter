@@ -31,95 +31,95 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
      *
      * @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
      */
-    protected $_collection = null;
+    private $collection = null;
 
     /**
      * List of available order fields
      *
      * @var array
      */
-    protected $_availableOrder = null;
+    private $availableOrder = null;
 
     /**
      * List of available view types
      *
      * @var array
      */
-    protected $_availableMode = [];
+    private $availableMode = [];
 
     /**
      * Is enable View switcher
      *
      * @var bool
      */
-    protected $_enableViewSwitcher = true;
+    private $enableViewSwitcher = true;
 
     /**
      * Is Expanded
      *
      * @var bool
      */
-    protected $_isExpanded = true;
+    private $isExpanded = true;
 
     /**
      * Default Order field
      *
      * @var string
      */
-    protected $_orderField = null;
+    private $orderField = null;
 
     /**
      * Default direction
      *
      * @var string
      */
-    protected $_direction = ProductList::DEFAULT_SORT_DIRECTION;
+    private $direction = ProductList::DEFAULT_SORT_DIRECTION;
 
     /**
      * Default View mode
      *
      * @var string
      */
-    protected $_viewMode = null;
+    private $viewMode = null;
 
     /**
-     * @var bool $_paramsMemorizeAllowed
+     * @var bool $paramsMemorizeAllowed
      */
-    protected $_paramsMemorizeAllowed = true;
+    private $paramsMemorizeAllowed = true;
 
     /**
      * @var string
      */
-    protected $_template = 'product/list/toolbar.phtml';
+    private $template = 'product/list/toolbar.phtml';
 
     /**
      * Catalog config
      *
      * @var \Magento\Catalog\Model\Config
      */
-    protected $_catalogConfig;
+    private $catalogConfig;
 
     /**
      * Catalog session
      *
      * @var \Magento\Catalog\Model\Session
      */
-    protected $_catalogSession;
+    private $catalogSession;
 
     /**
      * @var ToolbarModel
      */
-    protected $_toolbarModel;
+    private $toolbarModel;
 
     /**
      * @var ProductList
      */
-    protected $_productListHelper;
+    private $productListHelper;
 
     /**
      * @var \Magento\Framework\Data\Helper\PostHelper
      */
-    protected $_postDataHelper;
+    private $postDataHelper;
 
     /**
      *
@@ -137,7 +137,7 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
     /**
      * @var \Cybage\Layermultifilter\Helper\Data
      */
-    protected $_helperData;
+    private $helperData;
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Catalog\Model\Session $catalogSession
@@ -157,13 +157,13 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
         ProductList $productListHelper,
         \Magento\Framework\Data\Helper\PostHelper $postDataHelper,
         \Magento\Framework\Session\Generic $multifilterSession,
-        \Magento\Framework\Registry  $coreRegistry,
+        \Magento\Framework\Registry $coreRegistry,
         \Cybage\Layermultifilter\Helper\Data $helperData,
         array $data = []
     ) {
         $this->multifilterSession = $multifilterSession;
         $this->coreRegistry = $coreRegistry;
-        $this->_helperData = $helperData;
+        $this->helperData = $helperData;
         parent::__construct(
             $context,
             $catalogSession,
@@ -178,6 +178,7 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
 
     /**
      * Function to getPagerHtml to create custom pagination for ajax block
+     *
      * @return pager block instance
      */
     public function getPagerHtml()
@@ -187,10 +188,9 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
         $pagerBlock = $this->getChildBlock('product_list_toolbar_pager');
         $currentLimit = $this->multifilterSession->getActiveLimit();
         $currentSortOpt = $this->multifilterSession->getActiveSort();
-        $implodedArr = $this->_helperData->getProducts($categories, $attributes);
-        $productCollection = $this->_helperData->getParentCollection($implodedArr, $currentLimit, $currentSortOpt);
+        $implodedArr = $this->helperData->getProducts($categories, $attributes);
+        $productCollection = $this->helperData->getParentCollection($implodedArr, $currentLimit, $currentSortOpt);
         if ($pagerBlock instanceof \Magento\Framework\DataObject) {
-            /* @var $pagerBlock \Magento\Theme\Block\Html\Pager */
             ($currentLimit > 0) ? $pagerBlock->setLimit($currentLimit):$pagerBlock->setLimit(9);
             $pagerBlock->setCollection($productCollection);
             return $pagerBlock->toHtml();
@@ -199,6 +199,7 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
     
     /**
      * Function to get Current category to create custom pagination for ajax block
+     *
      * @return pager block instance
      */
     public function getCurrentCat()

@@ -46,8 +46,6 @@ if ($block->canShowBlock()):
                 ?>
                 <?php if ($filter->getItemsCount()): ?>
                     <?php if (!$wrapOptions): ?>
-
-
                         <div class="filter-options" id="narrow-by-list" data-role="content" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active":<?php echo $activeBlocks; ?>, "multipleCollapsible": true}}'>
                             <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?php /* @escapeNotVerified */ echo __('Shopping Options') ?></strong>
                             <input type="button" class="action tocart primary" id="refineFilter" value="Refine"/>
@@ -65,16 +63,16 @@ if ($block->canShowBlock()):
             <?php if ($wrapOptions): ?>
                 </div>
     <?php else: ?>
-                <script>
-                    require([
-                        'jquery'
-                    ], function ($) {
-                        $('#layered-filter-block').addClass('filter-no-options');
-                    });
-                </script>
+            <script>
+                require([
+                    'jquery'
+                ], function ($) {
+                    $('#layered-filter-block').addClass('filter-no-options');
+                });
+            </script>
     <?php endif; ?>
         </div>
-    </div>                          
+    </div>
 
 <?php endif; ?>
 <script>
@@ -90,7 +88,7 @@ if ($block->canShowBlock()):
             if ($('#filterlist .multifilter.category').is(':checked')) {
             } else {
 <?php if ($currentCatId) { ?>
-                    categoryFilter = <?php echo $currentCatId ?>;
+       categoryFilter = <?php echo $currentCatId ?>;
 <?php } ?>
             }
             var sliderprice = $('#sliderprice').val();

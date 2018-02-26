@@ -28,31 +28,31 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
      *
      * @var \Magento\Catalog\Model\Layer
      */
-    protected $_catalogLayer;
+    private $catalogLayer;
 
     /**
      *
      * @var \Magento\Framework\Session\Generic
      */
-    protected $_multifilterSession;
+    private $multifilterSession;
 
     /**
      * @var \Magento\Catalog\Model\CategoryRepository
      */
-    protected $_categoryRepository;
+    private $categoryRepository;
 
     /**
      * @var \Magento\Eav\Model\Entity\Attribute
      */
-    protected $_entityAttribute;
+    private $entityAttribute;
 
     /**
      * @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection
      */
-    protected $_attributeOptionCollection;
+    private $attributeOptionCollection;
 
     /**
-     * 
+     * Constructor
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Catalog\Model\Layer\Resolver $layerResolver
      * @param \Magento\Framework\Session\Generic $multifilterSession
@@ -72,12 +72,12 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection $attributeOptionCollection,
         array $data = []
     ) {
-        $this->_catalogLayer = $layerResolver->get();
-        $this->_multifilterSession = $multifilterSession;
-        $this->_categoryRepository = $categoryRepository;
-        $this->_entityAttribute = $entityAttribute;
+        $this->catalogLayer = $layerResolver->get();
+        $this->multifilterSession = $multifilterSession;
+        $this->categoryRepository = $categoryRepository;
+        $this->entityAttribute = $entityAttribute;
         $this->productAttributeRepository = $productAttributeRepository;
-        $this->_attributeOptionCollection = $attributeOptionCollection;
+        $this->attributeOptionCollection = $attributeOptionCollection;
         parent::__construct($context, $layerResolver, $data);
     }
     
@@ -86,7 +86,7 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
      */
     public function getSessionCategories()
     {
-        return $this->_multifilterSession->getCategories();
+        return $this->multifilterSession->getCategories();
     }
     
     /**
@@ -94,7 +94,7 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
      */
     public function getSessionAttributes()
     {
-        return $this->_multifilterSession->getAtrributes();
+        return $this->multifilterSession->getAtrributes();
     }
     
     /**
@@ -102,15 +102,19 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
      */
     public function getActiveFilters()
     {
-        if (!empty($this->_multifilterSession->getTopCategory())) {
-            $filters = $this->_multifilterSession->getAtrributes();
+        if (!empty($this->multifilterSession->getTopCategory())) {
+            $filters = $this->multifilterSession->getAtrributes();
             return $filters;
-        } elseif (!empty($this->_multifilterSession->getCategories()) || !empty($this->_multifilterSession->getAtrributes())) {
-            $filters = array_merge($this->_multifilterSession->getCategories(), $this->_multifilterSession->getAtrributes());
+        } elseif (!empty($this->multifilterSession->getCategories())
+                || !empty($this->multifilterSession->getAtrributes())) {
+            $filters = array_merge(
+                $this->multifilterSession->getCategories(),
+                $this->multifilterSession->getAtrributes()
+            );
             return $filters;
         }
     }
-    
+
     /**
      * Function to get filter label by filter
      */
@@ -133,7 +137,9 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
     public function getFilterValueName($filter)
     {
         if (is_array($filter)) {
-            if ($filter['name'] == 'price') return $filter['value'];
+            if ($filter['name'] == 'price') {
+                return $filter['value'];
+            }
             $attributeCode = $filter['name'];
             
             $formOptions = $this->productAttributeRepository->get($attributeCode)->getOptions();
@@ -143,7 +149,7 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
                 }
             }
         } else {
-            $categoryObj = $this->_categoryRepository->get($filter);
+            $categoryObj = $this->categoryRepository->get($filter);
             return $categoryObj->getName();
         }
     }
@@ -157,7 +163,7 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
      */
     public function getAttributeInfo($entityType, $attributeCode)
     {
-        return $this->_entityAttribute->loadByCode($entityType, $attributeCode);
+        return $this->entityAttribute->loadByCode($entityType, $attributeCode);
     }
 
     /**

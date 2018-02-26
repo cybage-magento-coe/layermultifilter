@@ -21,7 +21,7 @@ define([
     "jquery",
     "jquery/ui"
 
-], function($) {
+], function ($) {
     /**
      * ProductListToolbarForm Widget - this widget is setting cookie and submitting form according to toolbar controls
      */

@@ -21,14 +21,15 @@
 
 namespace Cybage\Layermultifilter\Model;
 
-class Session extends \Magento\Framework\Session\SessionManager 
+class Session extends \Magento\Framework\Session\SessionManager
 {
     /**
      * Retrieve session name
      *
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return session_name();
     }
 
@@ -38,7 +39,8 @@ class Session extends \Magento\Framework\Session\SessionManager
      * @param string $name
      * @return $this
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         session_name($name);
         return $this;
     }

@@ -28,7 +28,7 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      *
      * @var \Magento\Framework\Registry
      */
-    protected $_coreRegistry = null;
+    private $coreRegistry = null;
     
     /**
      *
@@ -53,7 +53,7 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
         array $data = []
     ) {
         $this->multifilterSession = $multifilterSession;
-        $this->_coreRegistry = $coreRegistry;
+        $this->coreRegistry = $coreRegistry;
         parent::__construct(
             $context,
             $layerResolver,
@@ -69,7 +69,7 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
     public function getCurrentCat()
     {
         if (empty($this->multifilterSession->getTopCategory()) && empty($this->multifilterSession->getCategories())) {
-            $currentCat = $this->_coreRegistry->registry('current_category');
+            $currentCat = $this->coreRegistry->registry('current_category');
             return $currentCat->getId();
         } else {
             return $this->multifilterSession->getTopCategory();

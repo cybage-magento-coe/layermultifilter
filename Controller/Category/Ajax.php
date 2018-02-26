@@ -23,37 +23,44 @@ namespace Cybage\Layermultifilter\Controller\Category;
 
 use Magento\Framework\App\Action\Context;
 
-class Ajax extends \Magento\Framework\App\Action\Action {
+class Ajax extends \Magento\Framework\App\Action\Action
+{
 
     /**
      *
      * @var \Magento\Framework\Session\Generic
      */
-    protected $_multifilterSession;
+    private $multifilterSession;
 
     /**
      * Core registry
      *
      * @var \Magento\Framework\Registry
      */
-    protected $_coreRegistry = null;
+    private $coreRegistry = null;
 
     /**
      * Json factory
      *
      * @var \Magento\Framework\Controller\Result\JsonFactory
      */
-    protected $_resultJsonFactory = null;
+    private $resultJsonFactory = null;
 
     /**
      * Url Interface factory
      *
      * @var \Magento\Framework\UrlInterface $urlInterface
      */
-    protected $_urlInterface;
+    private $urlInterface;
+    
+    /**
+     *
+     * @var \Magento\Framework\Session\SessionManager
+     */
+    protected $sessionManager;
 
     /**
-     * 
+     *
      * @param Context $context
      * @param \Magento\Framework\Session\Generic $multifilterSession
      * @param \Magento\Framework\Registry $coreRegistry
@@ -61,23 +68,88 @@ class Ajax extends \Magento\Framework\App\Action\Action {
      * @param \Magento\Framework\UrlInterface $urlInterface
      */
     public function __construct(
-    \Magento\Framework\App\Action\Context $context, \Magento\Framework\Session\Generic $multifilterSession, \Magento\Framework\Registry $coreRegistry, \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory, \Magento\Framework\UrlInterface $urlInterface
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Framework\Session\Generic $multifilterSession,
+        \Magento\Framework\Registry $coreRegistry,
+        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
+        \Magento\Framework\UrlInterface $urlInterface,
+        \Magento\Framework\Session\SessionManager $sessionManager
     ) {
-        $this->_multifilterSession = $multifilterSession;
-        $this->_coreRegistry = $coreRegistry;
-        $this->_resultJsonFactory = $resultJsonFactory;
-        $this->_urlInterface = $urlInterface;
+        $this->multifilterSession = $multifilterSession;
+        $this->coreRegistry = $coreRegistry;
+        $this->resultJsonFactory = $resultJsonFactory;
+        $this->urlInterface = $urlInterface;
+        $this->sessionManager = $sessionManager;
         parent::__construct($context);
     }
 
     /**
      * Intialization of request
      */
-    public function execute() {
+    public function execute()
+    {
         $filters = $this->getRequest()->getParam('checkedFilter');
+        $filterResult = $this->getFilterValues($filters);
+        $categories = $filterResult['categories'];
+        $attributes = $filterResult['attributes'];
+
+        /** Fetching product collection based on selected filters */
+        $activeLimit = $this->getRequest()->getParam('currentLimit');
+        $activeSortOpt = $this->getRequest()->getParam('currentSortOpt');
+        $viewMode = $this->getRequest()->getParam('viewmode');
+        $currentPage = $this->getRequest()->getParam('currentPage');
+
+        $this->multifilterSession->setType('custom');
+        if ($currentPage) {
+            $this->sessionManager->setCurrentPage($currentPage);
+        } else {
+            $this->sessionManager->setCurrentPage(1);
+        }
+
+        if ($activeLimit) {
+            $this->multifilterSession->setActiveLimit($activeLimit);
+        }
+
+        if ($activeSortOpt) {
+            $this->multifilterSession->setActiveSort($activeSortOpt);
+        }
+
+        if ($viewMode) {
+            $this->multifilterSession->setViewMode($viewMode);
+        }
+
+        if (empty($categories)) {
+            $this->multifilterSession->setTopCategory($this->getRequest()->getParam('categoryFilter'));
+        } else {
+            $this->multifilterSession->unsTopCategory();
+        }
+
+        $this->multifilterSession->setCategories(array_unique($categories));
+        $this->multifilterSession->setAtrributes($attributes);
+        $this->coreRegistry->register('type', '');
+        $this->_view->loadLayout();
+        $layout = $this->_view->getLayout();
+        $block_list = $layout->getBlock('category.products.list');
+        $block_contnt = $layout->getBlock('catalog.navigation.state');
+        $data = [];
+        $data['list'] = $block_list->toHtml();
+        $data['content'] = $block_contnt->toHtml();
+        $resultJson = $this->resultJsonFactory->create();
+        return $resultJson->setData($data);
+    }
+
+    /**
+     * GetFilter values
+     *
+     * @param type $filters
+     *
+     * @return type
+     */
+    private function getFilterValues($filters)
+    {
         $categories = [];
         $attributes = [];
-
+        $result = [];
         if (!empty($filters)) {
             foreach ($filters as $data) {
                 $filterArr[] = explode('?', $data);
@@ -86,7 +158,6 @@ class Ajax extends \Magento\Framework\App\Action\Action {
                     if ($value[0] == 'category') {
                         $categories[] = $value[2];
                     }
-
                     if ($value[0] == 'attribute') {
                         $attributes[$i]['name'] = $value[1];
                         $attributes[$i]['value'] = $value[2];
@@ -95,52 +166,8 @@ class Ajax extends \Magento\Framework\App\Action\Action {
                 }
             }
         }
-
-        /** Fetching product collection based on selected filters */
-        $activeLimit = $this->getRequest()->getParam('currentLimit');
-        $activeSortOpt = $this->getRequest()->getParam('currentSortOpt');
-        $viewMode = $this->getRequest()->getParam('viewmode');
-        $currentPage = $this->getRequest()->getParam('currentPage');
-
-        $this->_multifilterSession->setType('custom');
-        if ($currentPage) {
-            $this->_objectManager->get('\Magento\Framework\Session\SessionManager')->setCurrentPage($currentPage);
-        } else {
-            $this->_objectManager->get('\Magento\Framework\Session\SessionManager')->setCurrentPage(1);
-        }
-
-        if ($activeLimit) {
-            $this->_multifilterSession->setActiveLimit($activeLimit);
-        }
-
-        if ($activeSortOpt) {
-            $this->_multifilterSession->setActiveSort($activeSortOpt);
-        }
-
-        if ($viewMode) {
-            $this->_multifilterSession->setViewMode($viewMode);
-        }
-
-        if (empty($categories)) {
-            $this->_multifilterSession->setTopCategory($this->getRequest()->getParam('categoryFilter'));
-        } else {
-            $this->_multifilterSession->unsTopCategory();
-        }
-
-        $this->_multifilterSession->setCategories(array_unique($categories));
-        $this->_multifilterSession->setAtrributes($attributes);
-        $this->_coreRegistry->register('type', '');
-
-        $this->_view->loadLayout();
-        $layout = $this->_view->getLayout();
-        $block_list = $layout->getBlock('category.products.list');
-        $block_contnt = $layout->getBlock('catalog.navigation.state');
-        $data = array(
-            'list' => $block_list->toHtml(),
-            'content' => $block_contnt->toHtml(),
-        );
-        $resultJson = $this->_resultJsonFactory->create();
-        return $resultJson->setData($data);
+        $result['categories'] = $categories;
+        $result['attributes'] = $attributes;
+        return $result;
     }
-
 }

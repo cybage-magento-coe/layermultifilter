@@ -48,7 +48,7 @@ if ($filter->getName() == 'Price' && $priceDisplayMode == 'slider'):
         $range['max'] = $price[1];
     }
     ?>
-    <?php $url = $this->getFilterUrl($filter); ?>
+    <?php $url = $this->getFilterUrl(); ?>
     <script>
         var price_url = "<?= $url; ?>";
         require([

@@ -58,7 +58,6 @@ if ($block->getCollection()->getSize()):
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
-			
         <?php endif; ?>
         <p class="toolbar-amount" id="toolbar-amount">
             <?php if ($productColl == 1): ?>
@@ -69,7 +68,6 @@ if ($block->getCollection()->getSize()):
                 ?>
             <?php endif; ?>
         </p>
-
         <?php echo $block->getPagerHtml() ?>
         <div class="field limiter">
             <label class="label" for="limiter">
@@ -87,7 +85,6 @@ if ($block->getCollection()->getSize()):
             </div>
             <span class="limiter-text"><?php /* @escapeNotVerified */ echo __('per page') ?></span>
         </div>
-
         <?php if ($block->isExpanded()): ?>
             <div class="toolbar-sorter sorter">
                 <label class="sorter-label" for="sorter"><?php /* @escapeNotVerified */ echo __('Sort By') ?></label>
@@ -108,7 +105,8 @@ if ($block->getCollection()->getSize()):
 <?php endif ?>
 
 <script>
-    function selectlimit(value){
+    function selectlimit(value)
+    {
         var selectedFilter = [];
         jQuery(value.value).attr('selected','selected');
         jQuery('.multifilter').each(function(index,element){
@@ -140,7 +138,8 @@ if ($block->getCollection()->getSize()):
         });
     }
         
-    function selectsort(value){
+    function selectsort(value)
+    {
         var selectedFilter = [];
         jQuery('.multifilter').each(function(index,element){
             if(jQuery(this).is(':checked')){
@@ -150,8 +149,8 @@ if ($block->getCollection()->getSize()):
         var categoryFilter;
         if (jQuery('#filterlist .multifilter.category').is(':checked')) {
         } else {
-            <?php if($currentCatId){ ?>
-				categoryFilter = <?php echo $currentCatId ?>;
+            <?php if ($currentCatId) { ?>
+                categoryFilter = <?php echo $currentCatId ?>;
              <?php } ?>
         }
         jQuery('#ajaxloader').show();
@@ -171,9 +170,9 @@ if ($block->getCollection()->getSize()):
         });
         
     }
-    
+
     function selectswitcher(value)
-	{
+    {
         var selectedFilter = [];
         jQuery('.multifilter').each(function(index,element){
             if(jQuery(this).is(':checked')){
@@ -200,6 +199,6 @@ if ($block->getCollection()->getSize()):
                 jQuery('#ajaxcollection').show();
                 jQuery('#corecollection').hide();
             }
-        });        
+        });
     }
 </script> 

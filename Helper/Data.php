@@ -21,61 +21,64 @@
 
 namespace Cybage\Layermultifilter\Helper;
 
-class Data extends \Magento\Framework\App\Helper\AbstractHelper
-{
+class Data extends \Magento\Framework\App\Helper\AbstractHelper {
 
     /**
      * @var \Magento\Framework\Session\Generic
      */
-    private $multifilterSession;
+    protected $_multifilterSession;
 
     /**
      * Core registry
      *
      * @var \Magento\Framework\Registry
      */
-    private $coreRegistry = null;
+    protected $_coreRegistry = null;
 
     /**
      * @var \Magento\Catalog\Model\Product
      */
-    private $productModel;
+    protected $_productModel;
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    protected $scopeConfig;
+    protected $_scopeConfig;
 
     /**
      * @var \Magento\Catalog\Model\CategoryRepository
      */
-    private $categoryRepository;
-
+    protected $_categoryRepository;
+    
     /**
      * @var \Magento\Catalog\Model\Product\Attribute\Repository
      */
-    private $repository;
+    protected $_repository;
 
     /**
      * @var \Magento\Framework\Session\SessionManager
      */
-    private $sessionManager;
+    protected $_sessionManager;
 
     /**
      * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
      */
-    private $configurable;
+    protected $_configurable;
 
     /**
-     *
+     * 
+     * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\Session\Generic $multifilterSession
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Catalog\Model\Product $productModel
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Catalog\Model\CategoryRepository $categoryRepository
      * @param \Magento\Catalog\Model\Product\Attribute\Repository $repository
+     * @param \Magento\Framework\Session\SessionManager $sessionManager
+     * @param \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable
      */
     public function __construct(
+        \Magento\Framework\App\Action\Context $context,    
         \Magento\Framework\Session\Generic $multifilterSession,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Catalog\Model\Product $productModel,
@@ -85,124 +88,75 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\Session\SessionManager $sessionManager,
         \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable
     ) {
-        $this->multifilterSession = $multifilterSession;
-        $this->coreRegistry = $coreRegistry;
-        $this->productModel = $productModel;
-        $this->scopeConfig = $scopeConfig;
-        $this->categoryRepository = $categoryRepository;
-        $this->repository = $repository;
-        $this->sessionManager = $sessionManager;
-        $this->configurable = $configurable;
+        $this->_multifilterSession = $multifilterSession;
+        $this->_coreRegistry = $coreRegistry;
+        $this->_productModel = $productModel;
+        $this->_scopeConfig = $scopeConfig;
+        $this->_categoryRepository = $categoryRepository;
+        $this->_repository = $repository;
+        $this->_sessionManager = $sessionManager;
+        $this->_configurable = $configurable;
     }
 
     /**
      * Functionality to get configuration values of plugin
      *
-     * @param $configPath System xml config path
+     * @param $configPath: System xml config path
      * @return value of requested configuration
      */
-    public function getConfig($configPath)
-    {
-        return $this->scopeConfig->getValue(
-            $configPath,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+    public function getConfig($configPath) {
+        return $this->_scopeConfig->getValue($configPath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
      * Function to fetch product collection based on selected filters
      *
-     * @param $categories array of selected category
-     * @param $attributes array of selected attributes
+     * @param $categories: array of selected category
+     * @param $attributes: array of selected attributes
      * @return array of product collection
      */
-    public function getProducts(
-        $categories,
-        $attributes
-    ) {
-        $current = $this->getCurrentCategory($categories);
-        $currentCat = $current['currentcat'];
-        $registerCat = $current['registercat'];
-        $collection  = $this->getCollection($attributes, $currentCat, $registerCat);
-        $parentsId = '';
-        $productId = [];
-        $filterData = [];
-
-        foreach ($collection as $data) {
-            $filterData[] = explode(',', $data->getStyleGeneral());
-            $parentsId = $this->configurable->getParentIdsByChild($data->getId());
-            if (!empty($parentsId)) {
-                $finalArr[] = $parentsId[0];
-            } else {
-                $productId[] = $data->getId();
-            }
-        }
-
-        if (!empty($finalArr)) {
-            $implodedArr = array_unique($finalArr);
-            return $implodedArr;
-        } else {
-            return array_unique($productId);
-        }
-    }
-    
-    /**
-     * Function to get current category 
-     *
-     * @param type $categories
-     * @return array of current category and registory category
-     */
-    public function getCurrentCategory($categories)
-    {
+    public function getProducts($categories, $attributes) {
         $registerCat = '';
-        $currentCat = $this->coreRegistry->registry('current_category');
+        $currentCat = $this->_coreRegistry->registry('current_category');
         if (empty($currentCat) && empty($categories)) {
-            $catId = $this->multifilterSession->getTopCategory();
-            $currentCat = $this->categoryRepository->get($catId);
+            $catId = $this->_multifilterSession->getTopCategory();
+            $currentCat = $this->_categoryRepository->get($catId);
         }
         if (!empty($categories)) {
             $registerCat = array_unique($categories);
         }
-        return ['currentcat' => $currentCat, 'registercat' => $registerCat];
-    }
-
-    /**
-     *
-     * @param type $attributes
-     * @param type $currentCat
-     * @param type $registerCat
-     * @return type
-     */
-    public function getCollection($attributes, $currentCat, $registerCat)
-    {
-        $collection = $this->productModel->getCollection();
+        $collection = $this->_productModel->getCollection();
         $collection->joinField(
-            'category_id',
-            'catalog_category_product',
-            'category_id',
-            'product_id = entity_id',
-            null
+                'category_id', 'catalog_category_product', 'category_id', 'product_id = entity_id', null
         );
         if (!empty($registerCat)) {
-            $collection->addFieldToFilter('category_id', ['in' => $registerCat]);
+            $collection->addFieldToFilter(
+                    'category_id', array('in' => $registerCat)
+            );
         } else {
             $childCategories = $currentCat->getChildrenCategories();
             foreach ($childCategories as $category) {
                 $childCategoryValue[] = $category->getId();
             }
             if (!empty($childCategoryValue) && is_array($childCategoryValue)) {
-                $collection->addFieldToFilter('category_id', ['in' => $childCategoryValue]);
+                $collection->addFieldToFilter(
+                        'category_id', array('in' => $childCategoryValue)
+                );
             } else {
-                $collection->addFieldToFilter('category_id', $currentCat->getId());
+                $collection->addFieldToFilter(
+                        'category_id', $currentCat->getId()
+                );
             }
         }
+
         if (!empty($attributes)) {
+            $finalArr = [];
             $vals = [];
             foreach ($attributes as $data) {
                 $vals[$data['name']][] = $data['value'];
                 $frontendType = $this->checkAttribute($data['name']);
                 if ($frontendType == 'multiselect') {
-                    $filterFindSet[] = ['finset' => $data['value']];
+                    $filterFindSet[] = array('finset' => $data['value']);
                 }
             }
             if (!empty($filterFindSet)) {
@@ -228,7 +182,31 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 }
             }
         }
-        return $collection;
+        $parentsId = '';
+        $productId = [];
+        $filterData = [];
+
+        foreach ($collection as $data) {
+            $filterData[] = explode(',', $data->getStyleGeneral());
+            $parentsId = $this->_configurable->getParentIdsByChild($data->getId());
+            if (!empty($parentsId)) {
+                $finalArr[] = $parentsId[0];
+            } else {
+                $productId[] = $data->getId();
+            }
+        }
+
+        if (!empty($filterData)) {
+            $flat = call_user_func_array('array_merge_recursive', $filterData);
+            $uniq = array_values(array_unique($flat));
+        }
+
+        if (!empty($finalArr)) {
+            $implodedArr = array_unique($finalArr);
+            return $implodedArr;
+        } else {
+            return array_unique($productId);
+        }
     }
 
     /**
@@ -237,22 +215,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param $implodedArr: array of childs from getProducts() function
      * @return array of parent product collection
      */
-    public function getParentCollection(
-        $implodedArr,
-        $activeLimit,
-        $activeSortOpt
-    ) {
-        $productCollection = $this->productModel->getCollection();
+    public function getParentCollection($implodedArr, $activeLimit, $activeSortOpt) {
+        $productCollection = $this->_productModel->getCollection();
 
         if (empty($implodedArr)) {
-            $implodedArr = [];
+            $implodedArr = array(0);
         }
 
         if (!empty($implodedArr)) {
             $productCollection->addFieldToFilter('entity_id', [$implodedArr]);
             $productCollection->addAttributeToSelect('*');
-            $this->sessionManager->settotalCount(count($productCollection->getData()));
-            $page = $this->sessionManager->getCurrentPage();
+            $this->_sessionManager->settotalCount(count($productCollection->getData()));
+            $page = $this->_sessionManager->getCurrentPage();
             if ($page > 1 && !empty($page)) {
                 $lastLimit = $activeLimit * $page + 1;
                 $firstLimit = $activeLimit + 1;
@@ -265,9 +239,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                     $productCollection->setPageSize(9);
                 }
             }
+
             if ($activeSortOpt) {
                 $productCollection->addAttributeToSort("{$activeSortOpt}", 'DESC');
             }
+
             return $productCollection;
         } else {
             return $implodedArr;
@@ -282,8 +258,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function checkAttribute($attributeCode)
     {
-        $attributeColl = $this->repository->get($attributeCode);
+        $attributeColl = $this->_repository->get($attributeCode);
         $frontendType = $attributeColl->getFrontendInput();
         return $frontendType;
     }
+
 }

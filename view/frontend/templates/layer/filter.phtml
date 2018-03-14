@@ -71,8 +71,14 @@ if ($filter->getName() == 'Price' && $priceDisplayMode == 'slider'):
             });
             $("#amount").val("$" + $("#price-slider").slider("values", 0) +
                     " - $" + $("#price-slider").slider("values", 1));
-
         });
+        function resetSlider(){
+            var sliderr = jQuery("div#price-slider");
+            sliderr.slider("values", 0, <?= $range['min'] ?>);
+            sliderr.slider("values", 1, <?= $range['max'] ?>);
+            jQuery( "#amount" ).val( "$" + <?= $range['min'] ?> + " - $" + <?= $range['max'] ?> );
+        }
+
     </script>
     <?php ?>      
     <p>

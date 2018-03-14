@@ -87,9 +87,9 @@ if ($block->canShowBlock()):
             var categoryFilter;
             if ($('#filterlist .multifilter.category').is(':checked')) {
             } else {
-<?php if ($currentCatId) { ?>
-       categoryFilter = <?php echo $currentCatId ?>;
-<?php } ?>
+            <?php if ($currentCatId) { ?>
+                   categoryFilter = <?php echo $currentCatId ?>;
+            <?php } ?>
             }
             var sliderprice = $('#sliderprice').val();
             if (sliderprice != '') {
@@ -130,10 +130,11 @@ if ($block->canShowBlock()):
             var categoryFilter;
             if ($('#filterlist .multifilter.category').is(':checked')) {
             } else {
-<?php if ($currentCatId) { ?>
-                    categoryFilter = <?php echo $currentCatId ?>;
-<?php } ?>
+            <?php if ($currentCatId) { ?>
+                categoryFilter = <?php echo $currentCatId ?>;
+            <?php } ?>
             }
+            resetSlider();
             $.ajax({
                 url: '<?php echo $block->getUrl("layermultifilter/category/ajax"); ?>',
                 type: "POST",
@@ -153,21 +154,26 @@ if ($block->canShowBlock()):
             var idValue = $(this).parent().find(".filter-id-value").html();
             $('.filter-options .item').find('#' + idValue).removeAttr('checked');
             var selectedFilter = [];
+            if($('.filter-options .item').find('#' + idValue).length == 0){
+                resetSlider();
+            } else {
+                var sliderprice = $('#sliderprice').val();
+                if (sliderprice != '') {
+                    selectedFilter.push(sliderprice);
+                }
+            }
             $('.multifilter').each(function (index, element) {
                 if ($(this).is(':checked')) {
                     selectedFilter.push($(this).val());
                 }
             });
-            var sliderprice = $('#sliderprice').val();
-            if (sliderprice != '') {
-                selectedFilter.push(sliderprice);
-            }
+
             var categoryFilter;
             if ($('#filterlist .multifilter.category').is(':checked')) {
             } else {
-<?php if ($currentCatId) { ?>
+                <?php if ($currentCatId) { ?>
                     categoryFilter = <?php echo $currentCatId ?>;
-<?php } ?>
+                <?php } ?>
             }
             $.ajax({
                 url: '<?php echo $block->getUrl("layermultifilter/category/ajax"); ?>',

@@ -77,6 +77,7 @@ if ($filter->getName() == 'Price' && $priceDisplayMode == 'slider'):
             sliderr.slider("values", 0, <?= $range['min'] ?>);
             sliderr.slider("values", 1, <?= $range['max'] ?>);
             jQuery( "#amount" ).val( "$" + <?= $range['min'] ?> + " - $" + <?= $range['max'] ?> );
+            jQuery('#sliderprice').val('');
         }
 
     </script>

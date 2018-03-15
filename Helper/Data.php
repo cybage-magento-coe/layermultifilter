@@ -159,9 +159,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
                     $filterFindSet[] = array('finset' => $data['value']);
                 }
             }
-            if (!empty($filterFindSet)) {
-                $collection->addFieldToFilter($data['name'], $filterFindSet);
-            }
+//            if (!empty($filterFindSet)) {
+//                $collection->addFieldToFilter($data['name'], $filterFindSet);
+//            }
             foreach ($vals as $k => $v) {
                 if ($k == 'price') {
                     $price = '';

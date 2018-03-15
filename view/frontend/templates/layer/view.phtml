@@ -134,7 +134,9 @@ if ($block->canShowBlock()):
                 categoryFilter = <?php echo $currentCatId ?>;
             <?php } ?>
             }
-            resetSlider();
+            if($('#price-slider').length != 0){
+                resetSlider();
+            }
             $.ajax({
                 url: '<?php echo $block->getUrl("layermultifilter/category/ajax"); ?>',
                 type: "POST",

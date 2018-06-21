@@ -55,18 +55,18 @@ class FilterRenderer extends Template implements FilterRendererInterface
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Cybage\Layermultifilter\Helper\Data $helper
      * @param \Psr\Log\LoggerInterface $logger
-     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param \Magento\Framework\Session\Generic $session
      * @param array $data
      */
     public function __construct(
         Template\Context $context,
         \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Session\Generic $multifilterSession,
+        \Magento\Framework\Session\Generic $session,
         array $data = []
     ) {
 
         parent::__construct($context, $data);
-        $this->multifilterSession = $multifilterSession;
+        $this->multifilterSession = $session;
         $this->logger = $logger;
     }
 

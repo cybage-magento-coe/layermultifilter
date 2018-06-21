@@ -68,7 +68,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     /**
      * 
      * @param \Magento\Framework\App\Action\Context $context
-     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param \Magento\Framework\Session\Generic $session
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Catalog\Model\Product $productModel
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -79,7 +79,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,    
-        \Magento\Framework\Session\Generic $multifilterSession,
+        \Magento\Framework\Session\Generic $session,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Catalog\Model\Product $productModel,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -88,7 +88,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
         \Magento\Framework\Session\SessionManager $sessionManager,
         \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable
     ) {
-        $this->_multifilterSession = $multifilterSession;
+        $this->_multifilterSession = $session;
         $this->_coreRegistry = $coreRegistry;
         $this->_productModel = $productModel;
         $this->_scopeConfig = $scopeConfig;

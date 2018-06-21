@@ -75,7 +75,7 @@ class AjaxProduct extends \Magento\Catalog\Block\Product\ListProduct implements 
      * @param \Magento\Catalog\Model\Layer\Resolver $layerResolver
      * @param CategoryRepositoryInterface $categoryRepository
      * @param \Magento\Framework\Url\Helper\Data $urlHelper
-     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param \Magento\Framework\Session\Generic $session
      * @param \Magento\Framework\Registry $coreRegistry
      * @param array $data
      */
@@ -85,11 +85,11 @@ class AjaxProduct extends \Magento\Catalog\Block\Product\ListProduct implements 
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
         CategoryRepositoryInterface $categoryRepository,
         \Magento\Framework\Url\Helper\Data $urlHelper,
-        \Magento\Framework\Session\Generic $multifilterSession,
+        \Magento\Framework\Session\Generic $session,
         \Magento\Framework\Registry $coreRegistry,
         array $data = []
     ) {
-        $this->multifilterSession = $multifilterSession;
+        $this->multifilterSession = $session;
         $this->coreRegistry = $coreRegistry;
         parent::__construct(
             $context,

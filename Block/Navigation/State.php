@@ -55,7 +55,7 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
      * Constructor
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Catalog\Model\Layer\Resolver $layerResolver
-     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param \Magento\Framework\Session\Generic $session
      * @param \Magento\Catalog\Model\CategoryRepository $categoryRepository
      * @param \Magento\Eav\Model\Entity\Attribute $entityAttribute
      * @param \Magento\Catalog\Model\Product\Attribute\Repository $productAttributeRepository
@@ -65,7 +65,7 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
-        \Magento\Framework\Session\Generic $multifilterSession,
+        \Magento\Framework\Session\Generic $session,
         \Magento\Catalog\Model\CategoryRepository $categoryRepository,
         \Magento\Eav\Model\Entity\Attribute $entityAttribute,
         \Magento\Catalog\Model\Product\Attribute\Repository $productAttributeRepository,
@@ -73,7 +73,7 @@ class State extends \Magento\LayeredNavigation\Block\Navigation\State
         array $data = []
     ) {
         $this->catalogLayer = $layerResolver->get();
-        $this->multifilterSession = $multifilterSession;
+        $this->multifilterSession = $session;
         $this->categoryRepository = $categoryRepository;
         $this->entityAttribute = $entityAttribute;
         $this->productAttributeRepository = $productAttributeRepository;

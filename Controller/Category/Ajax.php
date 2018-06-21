@@ -62,20 +62,21 @@ class Ajax extends \Magento\Framework\App\Action\Action
     /**
      *
      * @param Context $context
-     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param \Magento\Framework\Session\Generic $session
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Magento\Framework\UrlInterface $urlInterface
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\Session\Generic $multifilterSession,
+        \Magento\Framework\Session\Generic $session,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Magento\Framework\UrlInterface $urlInterface,
         \Magento\Framework\Session\SessionManager $sessionManager
     ) {
-        $this->multifilterSession = $multifilterSession;
+        $this->multifilterSession = $session;
+        
         $this->coreRegistry = $coreRegistry;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->urlInterface = $urlInterface;

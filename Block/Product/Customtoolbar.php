@@ -156,12 +156,12 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
         \Magento\Framework\Url\EncoderInterface $urlEncoder,
         ProductList $productListHelper,
         \Magento\Framework\Data\Helper\PostHelper $postDataHelper,
-        \Magento\Framework\Session\Generic $multifilterSession,
+        \Magento\Framework\Session\Generic $session,
         \Magento\Framework\Registry $coreRegistry,
         \Cybage\Layermultifilter\Helper\Data $helperData,
         array $data = []
     ) {
-        $this->multifilterSession = $multifilterSession;
+        $this->multifilterSession = $session;
         $this->coreRegistry = $coreRegistry;
         $this->helperData = $helperData;
         parent::__construct(

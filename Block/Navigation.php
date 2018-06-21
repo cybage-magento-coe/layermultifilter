@@ -49,10 +49,10 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
         \Magento\Catalog\Model\Layer\FilterList $filterList,
         \Magento\Catalog\Model\Layer\AvailabilityFlagInterface $visibilityFlag,
         \Magento\Framework\Registry $coreRegistry,
-        \Magento\Framework\Session\Generic $multifilterSession,
+        \Magento\Framework\Session\Generic $session,
         array $data = []
     ) {
-        $this->multifilterSession = $multifilterSession;
+        $this->multifilterSession = $session;
         $this->coreRegistry = $coreRegistry;
         parent::__construct(
             $context,

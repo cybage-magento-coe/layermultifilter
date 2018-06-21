@@ -47,21 +47,21 @@ class View extends \Magento\Framework\App\Action\Action
     private $helper;
 
     /**
-     *
+     * 
      * @param \Magento\Framework\App\Action\Context $context
-     * @param \Magento\Framework\Session\Generic $multifilterSession
+     * @param \Magento\Framework\Session\Generic $session
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Catalog\Model\Product $productModel
      * @param \Cybage\Layermultifilter\Helper\Data $helper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\Session\Generic $multifilterSession,
+        \Magento\Framework\Session\Generic $session,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Catalog\Model\Product $productModel,
         \Cybage\Layermultifilter\Helper\Data $helper
     ) {
-        $this->multifilterSession = $multifilterSession;
+        $this->multifilterSession = $session;
         $this->coreRegistry = $coreRegistry;
         $this->productModel = $productModel;
         $this->helper = $helper;
